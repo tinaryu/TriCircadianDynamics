@@ -1,0 +1,5 @@
+library(vegan)
+dfj<- read.csv(file = 'Jaccar_transcript_lr_larger_1.csv',header=TRUE,sep=",")
+sdfj<-stack(dfj)
+D2 <- vegdist(unclass(table(sdfj$ind,sdfj$values)), method = "jaccard")
+pheatmap(1-as.matrix(D2),colorRampPalette(c("white", "navy"))(2))

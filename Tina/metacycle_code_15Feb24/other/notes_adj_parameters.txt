@@ -1,0 +1,14 @@
+HDAC3
+adjusted (rAMP > 0.2 and phase > 6): 421
+phase: 1607
+rAMP: 1251
+
+nr1d1
+adjusted (rAMP > 0.2 and phase > 6): 565
+phase: 3060
+rAMP: 1208
+
+nfil3
+adjusted (rAMP > 0.2 and phase > 6): 179
+phase: 1461
+rAMP: 515

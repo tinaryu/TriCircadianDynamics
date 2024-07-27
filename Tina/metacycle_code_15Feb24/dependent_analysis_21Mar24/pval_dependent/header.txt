@@ -1,0 +1,1 @@
+CycID	ARS_pvalue	ARS_BH.Q	ARS_period	ARS_adjphase	ARS_amplitude	JTK_pvalue	JTK_BH.Q	JTK_period	JTK_adjphase	JTK_amplitude	LS_pvalue	LS_BH.Q	LS_period	LS_adjphase	LS_amplitude	meta2d_pvalue	meta2d_BH.Q	meta2d_period	meta2d_phase	meta2d_Base	meta2d_AMP	meta2d_rAMP
