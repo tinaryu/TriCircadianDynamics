@@ -1,0 +1,172 @@
+### GO
+
+```{r}
+library(clusterProfiler)
+library(org.Mm.eg.db)
+library(ggplot2)
+
+# Gene lists (assuming these are already read)
+nr1d1_genes <- readLines("nr1d1_uniq_ID.txt")
+hdac3_genes <- readLines("hdac3_uniq_ID.txt")
+nfil3_genes <- readLines("nfil3_uniq_ID.txt")
+
+# Convert SYMBOL to ENTREZID
+nr1d1_entrez <- bitr(nr1d1_genes, fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Mm.eg.db")
+hdac3_entrez <- bitr(hdac3_genes, fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Mm.eg.db")
+nfil3_entrez <- bitr(nfil3_genes, fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Mm.eg.db")
+
+gene_clusters <- list(
+  nr1d1 = nr1d1_entrez$ENTREZID,
+  hdac3 = hdac3_entrez$ENTREZID,
+  nfil3 = nfil3_entrez$ENTREZID
+)
+
+
+# GO
+enrichGO_custom <- function(gene) {
+enrichGO(gene, OrgDb = org.Mm.eg.db, keyType = "ENTREZID", 
+           pvalueCutoff = 0.05, pAdjustMethod = "BH", qvalueCutoff = 0.05)
+}
+
+# GO enrichment
+ck <- compareCluster(geneCluster = gene_clusters, fun = enrichGO_custom)
+ck <- setReadable(ck, OrgDb = org.Mm.eg.db, keyType = "ENTREZID")
+
+head(ck)
+
+```
+
+
+```{r}
+pdf('GOdotplot_uniq.pdf')
+dotplot(ck) +
+  scale_color_gradient(low = "blue", high = "red", name = "p.adjust") +
+  theme(axis.text.y = element_text(size = 8, hjust = 1)) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ggtitle("GO Biological Process Enrichment Analysis")
+dev.off()
+```
+
+
+```{r}
+pdf('GOnetwork_uniq.pdf')
+cnetplot(ck,showCategory = 3)
+dev.off()
+
+```
+
+```{r}
+#run the same thing with dep_ID list
+
+# Gene lists (assuming these are already read)
+nr1d1_genes <- readLines("nr1d1_dep_geneID.txt")
+hdac3_genes <- readLines("hdac3_dep_geneID.txt")
+nfil3_genes <- readLines("nfil3_dep_geneID.txt")
+
+# Convert SYMBOL to ENTREZID
+nr1d1_entrez <- bitr(nr1d1_genes, fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Mm.eg.db")
+hdac3_entrez <- bitr(hdac3_genes, fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Mm.eg.db")
+nfil3_entrez <- bitr(nfil3_genes, fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Mm.eg.db")
+
+gene_clusters <- list(
+  nr1d1 = nr1d1_entrez$ENTREZID,
+  hdac3 = hdac3_entrez$ENTREZID,
+  nfil3 = nfil3_entrez$ENTREZID
+)
+
+
+# GO
+enrichGO_custom <- function(gene) {
+enrichGO(gene, OrgDb = org.Mm.eg.db, keyType = "ENTREZID", 
+           pvalueCutoff = 0.05, pAdjustMethod = "BH", qvalueCutoff = 0.05)
+}
+
+# GO enrichment
+ck <- compareCluster(geneCluster = gene_clusters, fun = enrichGO_custom)
+ck <- setReadable(ck, OrgDb = org.Mm.eg.db, keyType = "ENTREZID")
+
+head(ck)
+```
+
+```{r}
+pdf('GOdotplot_dep.pdf')
+dotplot(ck) +
+  scale_color_gradient(low = "blue", high = "red", name = "p.adjust") +
+  theme(axis.text.y = element_text(size = 8, hjust = 1)) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ggtitle("GO Biological Process Enrichment Analysis")
+dev.off()
+```
+
+```{r}
+pdf('GOnetwork_dep.pdf')
+cnetplot(ck,showCategory = 3)
+dev.off()
+
+```
+
+### KEGG
+
+```{r}
+
+
+library(clusterProfiler)
+library(org.Mm.eg.db)
+
+# Gene lists (assuming these are already read)
+nr1d1_genes <- readLines("nr1d1_dep_geneID.txt")
+hdac3_genes <- readLines("hdac3_dep_geneID.txt")
+nfil3_genes <- readLines("nfil3_dep_geneID.txt")
+
+# Convert SYMBOL to ENTREZID
+nr1d1_entrez <- bitr(nr1d1_genes, fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Mm.eg.db")
+hdac3_entrez <- bitr(hdac3_genes, fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Mm.eg.db")
+nfil3_entrez <- bitr(nfil3_genes, fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Mm.eg.db")
+
+gene_clusters <- list(
+  nr1d1 = nr1d1_entrez$ENTREZID,
+  hdac3 = hdac3_entrez$ENTREZID,
+  nfil3 = nfil3_entrez$ENTREZID
+)
+
+# KEGG
+enrichKEGG_custom <- function(gene) {
+  enrichKEGG(gene, organism = "mmu", keyType = "ncbi-geneid")
+}
+
+# KEGG_enrichment
+ck <- compareCluster(geneCluster = gene_clusters, fun = enrichKEGG_custom)
+ck <- setReadable(ck, OrgDb = org.Mm.eg.db, keyType = "ENTREZID")
+
+# enrichment results
+head(ck)
+
+```
+
+```{r}
+ck
+ck@compareClusterResult
+```
+
+
+```{r}
+library(ggplot2)
+# plot
+pdf('KEGGdotplot_dep.pdf')
+dotplot(ck) +
+  scale_color_gradient(low = "blue", high = "red", name = "p.adjust") +
+  theme(axis.text.y = element_text(size = 7, hjust = 1)) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ggtitle("KEGG Pathway Enrichment Analysis")
+dev.off()
+
+```
+
+```{r}
+pdf('KEGGnetwork_dep.pdf')
+cnetplot(ck)
+dev.off()
+```
+
+
+
